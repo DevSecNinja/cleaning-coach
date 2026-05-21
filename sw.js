@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'cleaning-coach-v1';
+const CACHE_VERSION = 'cleaning-coach-__BUILD_VERSION__';
 const ASSETS = [
   './',
   './index.html',
@@ -20,6 +20,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+  if (new URL(event.request.url).origin !== self.location.origin) return;
   event.respondWith(fetch(event.request).then((response) => {
     const copy = response.clone();
     caches.open(CACHE_VERSION).then((cache) => cache.put(event.request, copy));

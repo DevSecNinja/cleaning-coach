@@ -10,7 +10,7 @@ Cleaning Coach is a mobile-first home cleaning planner for a deep, phased apartm
 - Per-room and overall progress bars, completion timestamps, actual time tracking, undo, reset, room completion, and not-applicable handling.
 - Custom tasks and drag-and-drop task ordering persist in `localStorage`.
 - Dark/light mode follows the operating system preference, with a soft Apple-inspired mobile-first interface.
-- PWA manifest and service worker provide offline support and cache refresh when `sw.js` changes.
+- PWA manifest and service worker provide offline support. The Pages workflow injects the commit SHA into the service worker cache name so main-branch deploys refresh cached assets.
 
 ## Run locally
 

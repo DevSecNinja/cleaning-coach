@@ -103,7 +103,10 @@ async function updateSunTimes() {
 
 function getPosition() {
   return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) reject(new Error('Geolocation unavailable'));
+    if (!navigator.geolocation) {
+      reject(new Error('Geolocation unavailable'));
+      return;
+    }
     navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 7000, maximumAge: 3600000 });
   });
 }
