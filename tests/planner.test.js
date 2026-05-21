@@ -39,6 +39,15 @@ test('recommended order puts set-and-forget and urgent daylight work early near 
   assert.ok(recommended.findIndex((task) => task.tag === 'needs-daylight') < recommended.findIndex((task) => task.tag === 'anytime'));
 });
 
+test('recommended order surfaces quick chores around lunch time', async () => {
+  const yaml = await readFile(new URL('../data/cleaning-plan.yml', import.meta.url), 'utf8');
+  const plan = normalizePlan(parseCleaningYaml(yaml));
+  const now = new Date('2026-05-23T12:15:00.000Z');
+  const recommended = getRecommendedTasks(plan, {}, { sunset: '2026-05-23T19:00:00.000Z' }, now);
+
+  assert.ok(Number(recommended[0].estimateMinutes) <= 12);
+});
+
 test('detects sunset within a configurable warning window', () => {
   const now = new Date('2026-05-21T16:00:00.000Z');
 

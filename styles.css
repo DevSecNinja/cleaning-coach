@@ -85,10 +85,19 @@ main { display: grid; gap: 1rem; }
 .progress-shell span { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--success), var(--accent)); transition: width 280ms ease; }
 
 .recommended ol { display: grid; gap: 0.5rem; padding-left: 1.5rem; }
-.recommended li { padding: 0.5rem 0; }
+.recommended li { display: flex; gap: 0.75rem; justify-content: space-between; align-items: center; padding: 0.5rem 0; }
 .recommended span { display: block; color: var(--muted); font-size: 0.9rem; }
+.notify-settings { margin-top: 1rem; display: grid; gap: 0.55rem; }
+.notify-settings label { display: inline-flex; gap: 0.5rem; align-items: center; color: var(--muted); }
+.notify-settings input[type="checkbox"] { width: 1rem; min-height: 1rem; accent-color: var(--accent); }
+.notify-settings p { margin: 0; color: var(--muted); font-size: 0.9rem; }
 .rooms { display: grid; gap: 1rem; }
 .room-card.complete { outline: 2px solid var(--success); animation: pulse 700ms ease; }
+.room-complete-button {
+  background: linear-gradient(90deg, var(--success), var(--accent));
+  color: white;
+  box-shadow: 0 10px 20px rgba(50, 180, 123, 0.22);
+}
 .task-list { display: grid; gap: 0.7rem; padding: 0; list-style: none; }
 .task {
   display: grid;
@@ -103,11 +112,14 @@ main { display: grid; gap: 1rem; }
 .task label { display: flex; gap: 0.8rem; align-items: flex-start; }
 .task input[type="checkbox"] { width: 1.3rem; min-height: 1.3rem; margin-top: 0.15rem; accent-color: var(--success); }
 .task small { display: block; margin-top: 0.25rem; color: var(--muted); }
+.task-runtime { margin: 0.5rem 0 0 2.1rem; color: var(--accent-strong); font-weight: 700; }
 .warning-copy { margin: 0.5rem 0 0 2.1rem; color: var(--warning); font-weight: 700; }
 .task-actions { display: flex; gap: 0.45rem; flex-wrap: wrap; }
 .task-actions button { min-height: 36px; padding: 0.45rem 0.75rem; }
 .custom-task { display: grid; grid-template-columns: minmax(0, 1fr) 5.5rem auto; gap: 0.5rem; margin-top: 1rem; }
 .summary { text-align: center; background: linear-gradient(135deg, rgba(50, 180, 123, 0.2), rgba(79, 124, 255, 0.18)); }
+.app-footer { width: min(1120px, 100%); margin: 0 auto; padding: 0 1rem 1.5rem; color: var(--muted); font-size: 0.9rem; }
+.app-footer p { margin: 0; }
 .toast { position: fixed; left: 1rem; right: 1rem; bottom: 1rem; z-index: 5; max-width: 34rem; margin: auto; padding: 1rem; border-radius: 20px; background: var(--panel-strong); box-shadow: var(--shadow); font-weight: 700; animation: slideUp 220ms ease; }
 .confetti-piece { position: fixed; top: -1rem; z-index: 6; width: 0.7rem; height: 1rem; border-radius: 3px; background: var(--accent); animation: fall 3s ease-in forwards; }
 .confetti-piece:nth-of-type(3n) { background: var(--success); }
