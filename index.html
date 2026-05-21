@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#111827" />
+    <title>Cleaning Coach</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <p class="eyebrow">Deep clean planner</p>
+      <h1>Cleaning Coach</h1>
+      <p class="subtitle">A guided, rewarding way to finish a phased apartment clean.</p>
+      <form id="goal-form" class="goal-form">
+        <label for="goal">End goal motivation</label>
+        <div>
+          <input id="goal" name="goal" type="text" maxlength="60" placeholder="🍺 Cold beer waiting" />
+          <button type="submit">Save</button>
+        </div>
+      </form>
+      <p id="goal-display" class="goal-display" hidden></p>
+    </header>
+
+    <main>
+      <section class="status-card" aria-labelledby="overall-title">
+        <div>
+          <p class="eyebrow">Overall progress</p>
+          <h2 id="overall-title">Ready when you are</h2>
+          <p id="time-summary">Loading tasks…</p>
+        </div>
+        <div class="progress-shell" aria-label="Overall progress"><span id="overall-progress"></span></div>
+        <div class="actions">
+          <button id="reset-progress" class="secondary" type="button">Reset progress</button>
+          <button id="install-app" class="secondary" type="button" hidden>Install app</button>
+        </div>
+      </section>
+
+      <section class="sun-card" aria-labelledby="sun-title">
+        <div>
+          <p class="eyebrow">Daylight coach</p>
+          <h2 id="sun-title">Finding local sunrise & sunset…</h2>
+          <p id="sun-detail">Tasks tagged needs-daylight will be highlighted when sunset is close.</p>
+        </div>
+        <button id="refresh-sun" class="secondary" type="button">Refresh daylight</button>
+      </section>
+
+      <section class="recommended" aria-labelledby="recommended-title">
+        <p class="eyebrow">Recommended next</p>
+        <h2 id="recommended-title">Smart task order</h2>
+        <ol id="recommended-list"></ol>
+      </section>
+
+      <section id="rooms" class="rooms" aria-live="polite"></section>
+
+      <section id="summary" class="summary" hidden>
+        <h2>Clean complete 🎉</h2>
+        <p id="summary-copy"></p>
+      </section>
+    </main>
+
+    <template id="confetti-piece"><span class="confetti-piece"></span></template>
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,164 @@
+apartment:
+  size: medium
+rooms:
+  - id: kitchen
+    name: Kitchen
+    tasks:
+      - id: extractor-fan
+        name: Extractor fan
+        priority: urgent
+        tag: needs-daylight
+        estimateMinutes: 25
+      - id: countertop
+        name: Countertop
+        priority: normal
+        tag: anytime
+        estimateMinutes: 15
+      - id: electric-stove-hob
+        name: Electric stove/hob
+        priority: urgent
+        tag: time-sensitive
+        estimateMinutes: 20
+      - id: sink-drain
+        name: Sink drain
+        priority: normal
+        tag: set-and-forget
+        estimateMinutes: 10
+      - id: fridge
+        name: Fridge
+        priority: normal
+        tag: time-sensitive
+        estimateMinutes: 30
+      - id: drawers
+        name: Drawers
+        priority: low
+        tag: anytime
+        estimateMinutes: 20
+  - id: living-room
+    name: Living Room
+    tasks:
+      - id: dining-table
+        name: Dining table
+        priority: normal
+        tag: anytime
+        estimateMinutes: 10
+      - id: dining-chairs
+        name: Dining chairs
+        priority: normal
+        tag: anytime
+        estimateMinutes: 15
+      - id: desk-workplace
+        name: Desk/workplace
+        priority: normal
+        tag: anytime
+        estimateMinutes: 15
+      - id: monitor-peripherals
+        name: Monitor + peripherals
+        priority: normal
+        tag: anytime
+        estimateMinutes: 10
+      - id: coffee-table
+        name: Coffee table
+        priority: normal
+        tag: anytime
+        estimateMinutes: 10
+      - id: tv-cabinet
+        name: TV cabinet
+        priority: normal
+        tag: anytime
+        estimateMinutes: 15
+      - id: tv-screen
+        name: TV screen
+        priority: low
+        tag: anytime
+        estimateMinutes: 8
+      - id: couch
+        name: Couch
+        priority: normal
+        tag: anytime
+        estimateMinutes: 25
+      - id: gaming-chair-playseat
+        name: Gaming chair/playseat
+        priority: low
+        tag: anytime
+        estimateMinutes: 15
+  - id: toilet-wc
+    name: Toilet/WC
+    tasks:
+      - id: toilet-bowl-seat-exterior
+        name: Toilet bowl + seat + exterior
+        priority: urgent
+        tag: time-sensitive
+        estimateMinutes: 20
+      - id: sink
+        name: Sink
+        priority: normal
+        tag: anytime
+        estimateMinutes: 10
+  - id: laundry-room
+    name: Laundry Room
+    tasks:
+      - id: washing-machine-exterior-drum
+        name: Washing machine (exterior + drum)
+        priority: normal
+        tag: set-and-forget
+        estimateMinutes: 15
+  - id: bedroom
+    name: Bedroom
+    tasks:
+      - id: nightstand
+        name: Nightstand
+        priority: normal
+        tag: anytime
+        estimateMinutes: 10
+      - id: bedroom-tv
+        name: Bedroom TV
+        priority: low
+        tag: anytime
+        estimateMinutes: 8
+  - id: bathroom
+    name: Bathroom
+    tasks:
+      - id: floor
+        name: Floor
+        priority: normal
+        tag: anytime
+        estimateMinutes: 15
+      - id: towel-rail-hooks
+        name: Towel rail/hooks
+        priority: low
+        tag: anytime
+        estimateMinutes: 8
+      - id: ventilation-grille
+        name: Ventilation grille
+        priority: normal
+        tag: needs-daylight
+        estimateMinutes: 12
+      - id: shower
+        name: Shower
+        priority: urgent
+        tag: set-and-forget
+        estimateMinutes: 30
+      - id: mirror
+        name: Mirror
+        priority: normal
+        tag: needs-daylight
+        estimateMinutes: 8
+      - id: bathroom-cabinet
+        name: Bathroom cabinet
+        priority: normal
+        tag: anytime
+        estimateMinutes: 15
+  - id: general
+    name: General/Floors
+    tasks:
+      - id: corner-dusting
+        name: Corner dusting
+        priority: normal
+        tag: needs-daylight
+        estimateMinutes: 20
+      - id: wet-mop-all-hard-floors
+        name: Wet mop all hard floors
+        priority: urgent
+        tag: time-sensitive
+        estimateMinutes: 35
