@@ -1,0 +1,13 @@
+{
+  "name": "Cleaning Coach",
+  "short_name": "Clean Coach",
+  "description": "A mobile-first deep-clean planning coach.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#10131b",
+  "theme_color": "#111827",
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
