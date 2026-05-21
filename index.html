@@ -51,6 +51,13 @@
         <p class="eyebrow">Recommended next</p>
         <h2 id="recommended-title">Smart task order</h2>
         <ol id="recommended-list"></ol>
+        <div class="notify-settings">
+          <label><input id="notify-enabled" type="checkbox" /> Enable reminders</label>
+          <label><input id="notify-weekend-lunch" type="checkbox" /> Weekend lunch quick-chore reminder</label>
+          <label><input id="notify-home-only" type="checkbox" /> Only when I am home</label>
+          <button id="set-home-location" class="secondary" type="button">Set current location as home</button>
+          <p id="notify-status"></p>
+        </div>
       </section>
 
       <section id="rooms" class="rooms" aria-live="polite"></section>
@@ -60,6 +67,9 @@
         <p id="summary-copy"></p>
       </section>
     </main>
+    <footer class="app-footer">
+      <p id="build-ref">Build: loading…</p>
+    </footer>
 
     <template id="confetti-piece"><span class="confetti-piece"></span></template>
     <script type="module" src="src/app.js"></script>

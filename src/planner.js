@@ -93,11 +93,17 @@ export function getRecommendedTasks(plan, state = {}, sun = {}, now = new Date()
   const skipped = state.skipped || {};
   const tasks = getAllTasks(plan).filter((task) => !completed[task.uid] && !skipped[task.uid]);
   const daylightUrgency = minutesUntil(sun.sunset, now) <= 120;
+  const lunchWindow = now.getHours() >= 11 && now.getHours() <= 14;
 
   return tasks.sort((a, b) => {
+    const aLunchBoost = lunchWindow && Number(a.estimateMinutes || 0) <= 12 ? 0 : 1;
+    const bLunchBoost = lunchWindow && Number(b.estimateMinutes || 0) <= 12 ? 0 : 1;
     const aTag = a.tag === 'needs-daylight' && daylightUrgency ? 1 : TAG_WEIGHT[a.tag] ?? 4;
     const bTag = b.tag === 'needs-daylight' && daylightUrgency ? 1 : TAG_WEIGHT[b.tag] ?? 4;
-    return aTag - bTag || (PRIORITY_WEIGHT[a.priority] ?? 3) - (PRIORITY_WEIGHT[b.priority] ?? 3) || a.estimateMinutes - b.estimateMinutes;
+    return aLunchBoost - bLunchBoost
+      || aTag - bTag
+      || (PRIORITY_WEIGHT[a.priority] ?? 3) - (PRIORITY_WEIGHT[b.priority] ?? 3)
+      || a.estimateMinutes - b.estimateMinutes;
   });
 }
 

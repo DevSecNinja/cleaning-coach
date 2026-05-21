@@ -14,6 +14,7 @@ let state = loadState();
 let sun = {};
 let deferredInstallPrompt;
 const startedAt = Date.now();
+let reminderIntervalId;
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -23,6 +24,8 @@ async function init() {
   await loadPlan();
   bindGlobalEvents();
   await updateSunTimes();
+  await renderBuildInfo();
+  startReminderLoop();
   render();
   registerServiceWorker();
 }
@@ -36,14 +39,37 @@ async function loadPlan() {
 
 function loadState() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState();
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    const defaults = defaultState();
+    return {
+      ...defaults,
+      ...saved,
+      notificationSettings: {
+        ...defaults.notificationSettings,
+        ...(saved.notificationSettings || {}),
+      },
+    };
   } catch {
     return defaultState();
   }
 }
 
 function defaultState() {
-  return { completed: {}, skipped: {}, customTasks: {}, order: {}, starts: {}, goal: '' };
+  return {
+    completed: {},
+    skipped: {},
+    customTasks: {},
+    order: {},
+    starts: {},
+    goal: '',
+    notificationSettings: {
+      enabled: false,
+      weekendLunch: true,
+      homeOnly: false,
+      homeLocation: null,
+      lastLunchReminderDate: '',
+    },
+  };
 }
 
 function saveState() {
@@ -67,6 +93,23 @@ function bindGlobalEvents() {
     render();
   });
   $('#refresh-sun').addEventListener('click', updateSunTimes);
+  $('#notify-enabled').addEventListener('change', async (event) => {
+    state.notificationSettings.enabled = event.target.checked;
+    if (event.target.checked) await requestNotificationPermission();
+    saveState();
+    renderNotificationSettings();
+  });
+  $('#notify-weekend-lunch').addEventListener('change', (event) => {
+    state.notificationSettings.weekendLunch = event.target.checked;
+    saveState();
+    renderNotificationSettings();
+  });
+  $('#notify-home-only').addEventListener('change', (event) => {
+    state.notificationSettings.homeOnly = event.target.checked;
+    saveState();
+    renderNotificationSettings();
+  });
+  $('#set-home-location').addEventListener('click', saveHomeLocation);
   $('#install-app').addEventListener('click', async () => {
     if (!deferredInstallPrompt) return;
     deferredInstallPrompt.prompt();
@@ -116,6 +159,7 @@ function render() {
   $('#goal').value = state.goal || '';
   $('#goal-display').hidden = !state.goal;
   $('#goal-display').textContent = state.goal ? `Reward waiting: ${state.goal}` : '';
+  renderNotificationSettings();
   renderSun();
   renderOverall();
   renderRecommended();
@@ -149,9 +193,11 @@ function renderRecommended() {
   }
   for (const task of recommended) {
     const item = document.createElement('li');
-    item.innerHTML = `<strong>${task.name}</strong><span>${task.roomName} · ${task.tag} · ${task.estimateMinutes} min</span>`;
+    const quick = Number(task.estimateMinutes || 0) <= 12 ? ' · quick chore' : '';
+    item.innerHTML = `<div><strong>${task.name}</strong><span>${task.roomName} · ${task.tag} · ${task.estimateMinutes} min${quick}</span></div><button class="secondary" type="button" data-recommended-done="${task.uid}">Done</button>`;
     list.append(item);
   }
+  list.querySelectorAll('[data-recommended-done]').forEach((button) => button.addEventListener('click', () => toggleComplete(button.dataset.recommendedDone, true)));
 }
 
 function renderRooms() {
@@ -169,9 +215,8 @@ function renderRooms() {
           <p class="eyebrow">${roomProgress.done}/${roomProgress.total} complete</p>
           <h2>${room.name}</h2>
         </div>
-        <button class="secondary" type="button" data-room-complete="${room.id}">Complete room</button>
+        <button class="room-complete-button" type="button" data-room-complete="${room.id}">Complete room</button>
       </div>
-      <div class="progress-shell"><span style="width:${roomProgress.percent}%"></span></div>
       <ul class="task-list" data-room-list="${room.id}"></ul>
       <form class="custom-task" data-add-task="${room.id}">
         <input name="name" required placeholder="Add custom task" />
@@ -190,6 +235,8 @@ function renderTask(task) {
   const done = state.completed[task.uid];
   const skipped = state.skipped[task.uid];
   const daylightWarning = task.tag === 'needs-daylight' && isSunsetWithin(sun.sunset, 2);
+  const started = state.starts[task.uid];
+  const elapsedMinutes = started ? Math.max(1, Math.round((Date.now() - new Date(started).getTime()) / 60000)) : null;
   const item = document.createElement('li');
   item.className = `task ${done ? 'done' : ''} ${skipped ? 'skipped' : ''} ${daylightWarning ? 'warning' : ''}`;
   item.draggable = true;
@@ -201,12 +248,14 @@ function renderTask(task) {
     <div class="task-main">
       <label>
         <input type="checkbox" ${done ? 'checked' : ''} data-complete="${task.uid}" />
-        <span><strong>${task.name}</strong><small>${task.priority} · ${task.tag} · ${task.estimateMinutes} min${actual}${lastDone}</small></span>
+        <span><strong>${task.emoji || emojiForTask(task)} ${task.name}</strong><small>${task.priority} · ${task.tag} · ${task.estimateMinutes} min${actual}${lastDone}</small></span>
       </label>
+      ${started && !done ? `<p class="task-runtime">⏱ ${formatDuration(elapsedMinutes)} elapsed</p>` : ''}
       ${daylightWarning ? '<p class="warning-copy">Sunset is close — do this while light is available.</p>' : ''}
     </div>
     <div class="task-actions">
-      <button class="secondary" type="button" data-start="${task.uid}">${state.starts[task.uid] ? 'Started' : 'Start'}</button>
+      <button class="secondary" type="button" data-start="${task.uid}">${started ? 'Restart' : 'Start'}</button>
+      ${!done ? `<button class="secondary" type="button" data-done="${task.uid}">Done</button>` : ''}
       <button class="secondary" type="button" data-skip="${task.uid}">${skipped ? 'Applicable' : 'N/A'}</button>
       ${done ? `<button class="secondary" type="button" data-undo="${task.uid}">Undo</button>` : ''}
     </div>
@@ -222,6 +271,7 @@ function bindRoomEvents(container) {
     saveState();
     render();
   }));
+  container.querySelectorAll('[data-done]').forEach((button) => button.addEventListener('click', () => toggleComplete(button.dataset.done, true)));
   container.querySelectorAll('[data-skip]').forEach((button) => button.addEventListener('click', () => {
     const id = button.dataset.skip;
     state.skipped[id] ? delete state.skipped[id] : state.skipped[id] = new Date().toISOString();
@@ -330,6 +380,104 @@ function formatDuration(minutes) {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
   return hours ? `${hours}h ${mins}m` : `${mins}m`;
+}
+
+function emojiForTask(task) {
+  if (task.roomId === 'kitchen') return '🍽️';
+  if (task.roomId === 'bathroom' || task.roomId === 'toilet-wc') return '🧼';
+  if (task.roomId === 'bedroom') return '🛏️';
+  if (task.roomId === 'laundry-room') return '🧺';
+  if (task.name.toLowerCase().includes('floor')) return '🧹';
+  if (task.name.toLowerCase().includes('mirror')) return '🪞';
+  return '✨';
+}
+
+function renderNotificationSettings() {
+  const settings = state.notificationSettings;
+  $('#notify-enabled').checked = settings.enabled;
+  $('#notify-weekend-lunch').checked = settings.weekendLunch;
+  $('#notify-home-only').checked = settings.homeOnly;
+  $('#notify-status').textContent = settings.homeLocation
+    ? `Home location saved${settings.homeOnly ? ' · reminders only when home' : ''}.`
+    : 'No home location saved yet.';
+}
+
+async function saveHomeLocation() {
+  try {
+    const position = await getPosition();
+    state.notificationSettings.homeLocation = { latitude: position.coords.latitude, longitude: position.coords.longitude };
+    saveState();
+    renderNotificationSettings();
+    showToast('Home location saved for reminder filtering.');
+  } catch {
+    showToast('Unable to save home location right now.');
+  }
+}
+
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') await Notification.requestPermission();
+}
+
+function startReminderLoop() {
+  if (reminderIntervalId) clearInterval(reminderIntervalId);
+  reminderIntervalId = setInterval(() => { maybeSendWeekendLunchReminder(); }, 60000);
+  maybeSendWeekendLunchReminder();
+}
+
+async function maybeSendWeekendLunchReminder(now = new Date()) {
+  const settings = state.notificationSettings;
+  if (!settings.enabled || !settings.weekendLunch) return;
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  if (![0, 6].includes(now.getDay())) return;
+  const hour = now.getHours();
+  if (hour < 11 || hour > 14) return;
+  const today = now.toISOString().slice(0, 10);
+  if (settings.lastLunchReminderDate === today) return;
+  if (settings.homeOnly && !(await isAtHome())) return;
+
+  const quickTask = getRecommendedTasks(plan, state, sun, now).find((task) => Number(task.estimateMinutes || 0) <= 12);
+  if (!quickTask) return;
+
+  settings.lastLunchReminderDate = today;
+  saveState();
+  new Notification('Quick lunch chore?', { body: `${quickTask.name} · ${quickTask.estimateMinutes} min` });
+}
+
+async function isAtHome() {
+  const home = state.notificationSettings.homeLocation;
+  if (!home) return false;
+  try {
+    const position = await getPosition();
+    const distance = distanceMeters(home.latitude, home.longitude, position.coords.latitude, position.coords.longitude);
+    return distance <= 300;
+  } catch {
+    return false;
+  }
+}
+
+function distanceMeters(lat1, lon1, lat2, lon2) {
+  const toRadians = (degrees) => (degrees * Math.PI) / 180;
+  const earthRadiusMeters = 6371000;
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2
+    + Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLon / 2) ** 2;
+  return 2 * earthRadiusMeters * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+async function renderBuildInfo() {
+  const output = $('#build-ref');
+  if (!output) return;
+  output.textContent = 'Build: loading…';
+  try {
+    const response = await fetch('sw.js', { cache: 'no-store' });
+    const source = await response.text();
+    const build = source.match(/CACHE_VERSION = '([^']+)'/)?.[1] || 'cleaning-coach-local';
+    output.textContent = `Build: ${build.replace(/^cleaning-coach-/, '')}`;
+  } catch {
+    output.textContent = 'Build: unavailable';
+  }
 }
 
 function registerServiceWorker() {
