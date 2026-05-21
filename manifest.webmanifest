@@ -1,0 +1,18 @@
+{
+  "name": "Cleaning Coach",
+  "short_name": "CleanCoach",
+  "description": "A guided deep-clean planner for phased home cleaning sessions.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#15121d",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

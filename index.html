@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#7c3aed">
+    <title>Cleaning Coach</title>
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./src/app.js"></script>
+  </head>
+  <body>
+    <div class="shell" id="app">
+      <header class="hero">
+        <p class="eyebrow">Deep clean planner</p>
+        <h1>Cleaning Coach</h1>
+        <p>Plan the next best task, keep daylight-sensitive chores visible, and make every finished room feel rewarding.</p>
+        <form id="goal-form" class="goal-form">
+          <label for="goal-input">End goal</label>
+          <div>
+            <input id="goal-input" name="goal" placeholder="🍺 Cold beer waiting">
+            <button type="submit">Save</button>
+          </div>
+        </form>
+        <p id="goal-display" class="goal-display">Set a reward to keep future-you motivated.</p>
+      </header>
+
+      <main>
+        <section class="dashboard" aria-label="Cleaning progress dashboard">
+          <article class="stat-card">
+            <span id="clock">--:--</span>
+            <p id="sun">Sunrise/sunset pending</p>
+            <small id="location-status">Allow location access to calculate sunrise and sunset warnings.</small>
+          </article>
+          <article class="stat-card">
+            <span id="remaining-time">0 min remaining</span>
+            <p id="overall-progress-text">0/0 tasks complete</p>
+            <progress id="overall-progress" value="0" max="100"></progress>
+          </article>
+        </section>
+
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Recommended order</p>
+              <h2>Do these next</h2>
+            </div>
+            <button id="reset-progress" class="secondary" type="button">Reset</button>
+          </div>
+          <ol id="recommendations" class="recommendations"></ol>
+        </section>
+
+        <div id="rooms" class="rooms" aria-live="polite"></div>
+        <section id="summary" class="panel summary" aria-live="polite"></section>
+      </main>
+    </div>
+    <div id="toast" class="toast" hidden></div>
+    <div id="confetti" class="confetti" aria-hidden="true"></div>
+  </body>
+</html>

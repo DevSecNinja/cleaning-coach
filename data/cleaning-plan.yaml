@@ -1,0 +1,172 @@
+apartment:
+  size: medium apartment
+  notes: Deep phased clean for a lived-in home
+rooms:
+  - id: kitchen
+    name: Kitchen
+    encouragement: Kitchen done — the hardest room is behind you!
+    tasks:
+      - id: extractor-fan
+        name: Extractor fan
+        priority: urgent
+        tag: needs-daylight
+        estimateMinutes: 35
+      - id: countertop
+        name: Countertop
+        priority: normal
+        tag: anytime
+        estimateMinutes: 15
+      - id: electric-stove-hob
+        name: Electric stove/hob
+        priority: urgent
+        tag: time-sensitive
+        estimateMinutes: 25
+      - id: sink-drain
+        name: Sink drain
+        priority: normal
+        tag: set-and-forget
+        estimateMinutes: 20
+      - id: fridge
+        name: Fridge
+        priority: normal
+        tag: time-sensitive
+        estimateMinutes: 40
+      - id: drawers
+        name: Drawers
+        priority: low
+        tag: anytime
+        estimateMinutes: 20
+  - id: living-room
+    name: Living Room
+    encouragement: Living room reset — your future lounge time just got better!
+    tasks:
+      - id: dining-table
+        name: Dining table
+        priority: normal
+        tag: anytime
+        estimateMinutes: 10
+      - id: dining-chairs
+        name: Dining chairs
+        priority: normal
+        tag: anytime
+        estimateMinutes: 15
+      - id: desk-workplace
+        name: Desk/workplace
+        priority: normal
+        tag: anytime
+        estimateMinutes: 20
+      - id: monitor-peripherals
+        name: Monitor + peripherals
+        priority: normal
+        tag: needs-daylight
+        estimateMinutes: 15
+      - id: coffee-table
+        name: Coffee table
+        priority: normal
+        tag: anytime
+        estimateMinutes: 10
+      - id: tv-cabinet
+        name: TV cabinet
+        priority: normal
+        tag: anytime
+        estimateMinutes: 15
+      - id: tv-screen
+        name: TV screen
+        priority: normal
+        tag: needs-daylight
+        estimateMinutes: 10
+      - id: couch
+        name: Couch
+        priority: normal
+        tag: anytime
+        estimateMinutes: 25
+      - id: gaming-chair-playseat
+        name: Gaming chair/playseat
+        priority: low
+        tag: anytime
+        estimateMinutes: 15
+  - id: toilet-wc
+    name: Toilet/WC
+    encouragement: Toilet done — small room, huge freshness upgrade!
+    tasks:
+      - id: toilet-bowl-seat-exterior
+        name: Toilet bowl + seat + exterior
+        priority: urgent
+        tag: time-sensitive
+        estimateMinutes: 20
+      - id: sink
+        name: Sink
+        priority: normal
+        tag: anytime
+        estimateMinutes: 10
+  - id: laundry-room
+    name: Laundry Room
+    encouragement: Laundry room handled — the reset cycle is running!
+    tasks:
+      - id: washing-machine
+        name: Washing machine (exterior + drum)
+        priority: normal
+        tag: set-and-forget
+        estimateMinutes: 35
+  - id: bedroom
+    name: Bedroom
+    encouragement: Bedroom done — calm sleep space unlocked!
+    tasks:
+      - id: nightstand
+        name: Nightstand
+        priority: normal
+        tag: anytime
+        estimateMinutes: 10
+      - id: bedroom-tv
+        name: Bedroom TV
+        priority: low
+        tag: needs-daylight
+        estimateMinutes: 10
+  - id: bathroom
+    name: Bathroom
+    encouragement: Bathroom sparkling — that shower is going to feel earned!
+    tasks:
+      - id: floor
+        name: Floor
+        priority: normal
+        tag: anytime
+        estimateMinutes: 15
+      - id: towel-rail-hooks
+        name: Towel rail/hooks
+        priority: low
+        tag: anytime
+        estimateMinutes: 10
+      - id: ventilation-grille
+        name: Ventilation grille
+        priority: normal
+        tag: needs-daylight
+        estimateMinutes: 15
+      - id: shower
+        name: Shower
+        priority: urgent
+        tag: time-sensitive
+        estimateMinutes: 35
+      - id: mirror
+        name: Mirror
+        priority: normal
+        tag: needs-daylight
+        estimateMinutes: 10
+      - id: bathroom-cabinet
+        name: Bathroom cabinet
+        priority: low
+        tag: anytime
+        estimateMinutes: 20
+  - id: general
+    name: General/Floors
+    encouragement: Floors done — the whole apartment feels lighter!
+    tasks:
+      - id: corner-dusting
+        name: Corner dusting
+        priority: normal
+        tag: needs-daylight
+        estimateMinutes: 20
+      - id: wet-mop-hard-floors
+        name: Wet mop all hard floors
+        priority: normal
+        tag: time-sensitive
+        estimateMinutes: 35
