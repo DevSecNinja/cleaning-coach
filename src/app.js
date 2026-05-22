@@ -215,7 +215,7 @@ function renderRooms() {
           <p class="eyebrow">${roomProgress.done}/${roomProgress.total} complete</p>
           <h2>${room.name}</h2>
         </div>
-        <button class="room-complete-button" type="button" data-room-complete="${room.id}">Complete room</button>
+        <button class="room-complete-button" type="button" data-room-complete="${room.id}"${roomProgress.percent === 100 ? ' disabled' : ''}>Complete room</button>
       </div>
       <ul class="task-list" data-room-list="${room.id}"></ul>
       <form class="custom-task" data-add-task="${room.id}">

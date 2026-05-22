@@ -26,6 +26,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   margin: 0;
   min-height: 100vh;
@@ -35,6 +36,15 @@ body {
 }
 
 button, input { font: inherit; }
+input:not([type="checkbox"]):not([type="radio"]) {
+  min-height: 44px;
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--muted) 25%, transparent);
+  border-radius: 16px;
+  padding: 0.75rem 1rem;
+  color: var(--text);
+  background: var(--panel-strong);
+}
 button {
   min-height: 44px;
   border: 0;
@@ -48,15 +58,6 @@ button.secondary {
   color: var(--text);
   background: color-mix(in srgb, var(--panel-strong) 84%, var(--accent));
   box-shadow: none;
-}
-input {
-  min-height: 44px;
-  width: 100%;
-  border: 1px solid color-mix(in srgb, var(--muted) 25%, transparent);
-  border-radius: 16px;
-  padding: 0.75rem 1rem;
-  color: var(--text);
-  background: var(--panel-strong);
 }
 
 .hero, main { width: min(1120px, 100%); margin: 0 auto; padding: 1rem; }
@@ -97,6 +98,11 @@ main { display: grid; gap: 1rem; }
   background: linear-gradient(90deg, var(--success), var(--accent));
   color: white;
   box-shadow: 0 10px 20px rgba(50, 180, 123, 0.22);
+}
+.room-complete-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 .task-list { display: grid; gap: 0.7rem; padding: 0; list-style: none; }
 .task {
