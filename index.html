@@ -17,7 +17,13 @@
       <form id="goal-form" class="goal-form">
         <label for="goal">End goal motivation</label>
         <div>
-          <input id="goal" name="goal" type="text" maxlength="60" placeholder="🍺 Cold beer waiting" />
+          <input id="goal" name="goal" type="text" list="goal-options" maxlength="60" placeholder="🍺 Cold beer waiting" />
+          <datalist id="goal-options">
+            <option value="🍺 Cold beer waiting"></option>
+            <option value="🍕 Pizza after the final room"></option>
+            <option value="🎮 Gaming session"></option>
+            <option value="🛋️ Relaxing in a spotless home"></option>
+          </datalist>
           <button type="submit">Save</button>
         </div>
       </form>

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { getRecommendedTasks, isSunsetWithin, normalizePlan, parseCleaningYaml, summarizeProgress } from '../src/planner.js';
+import { getRecommendedTasks, isTaskCompletionExpired, isSunsetWithin, normalizePlan, parseCleaningYaml, summarizeProgress, taskCompletionExpiresAt } from '../src/planner.js';
 
 test('loads rooms, apartment size, and tasks from repository YAML', async () => {
   const yaml = await readFile(new URL('../data/cleaning-plan.yml', import.meta.url), 'utf8');
@@ -11,6 +11,11 @@ test('loads rooms, apartment size, and tasks from repository YAML', async () => 
   assert.equal(plan.rooms.length, 7);
   assert.equal(plan.rooms[0].name, 'Kitchen');
   assert.equal(plan.rooms[0].tasks[0].name, 'Extractor fan');
+  assert.ok(plan.rooms[0].tasks.some((task) => task.name === 'Oven'));
+  assert.deepEqual(
+    plan.rooms.find((room) => room.id === 'general').tasks.map((task) => task.name),
+    ['Dusting (stof verwijderen)', 'Vacuuming', 'Mopping'],
+  );
   assert.equal(plan.rooms[0].tasks.at(-1).priority, 'low');
 });
 
@@ -25,8 +30,22 @@ test('summarizes progress and remaining time while ignoring not applicable tasks
   });
 
   assert.equal(progress.done, 1);
-  assert.equal(progress.total, 27);
+  assert.equal(progress.total, 29);
   assert.ok(progress.remainingMinutes > 0);
+});
+
+test('expired recurring tasks become actionable again', async () => {
+  const yaml = await readFile(new URL('../data/cleaning-plan.yml', import.meta.url), 'utf8');
+  const plan = normalizePlan(parseCleaningYaml(yaml));
+  const task = plan.rooms.find((room) => room.id === 'general').tasks.find((item) => item.id === 'corner-dusting');
+  const state = { completed: { [task.uid]: { completedAt: '2026-05-01T10:00:00.000Z', actualMinutes: 20 } } };
+  const now = new Date('2026-05-09T10:00:00.000Z');
+
+  assert.equal(task.repeatDays, 7);
+  assert.equal(taskCompletionExpiresAt(task, state.completed[task.uid]).toISOString(), '2026-05-08T10:00:00.000Z');
+  assert.equal(isTaskCompletionExpired(task, state.completed[task.uid], now), true);
+  assert.equal(summarizeProgress(plan, state, now).done, 0);
+  assert.ok(getRecommendedTasks(plan, state, {}, now).some((item) => item.uid === task.uid));
 });
 
 test('recommended order puts set-and-forget and urgent daylight work early near sunset', async () => {
