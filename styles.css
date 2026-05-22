@@ -118,7 +118,8 @@ main { display: grid; gap: 1rem; }
 .task label { display: flex; gap: 0.8rem; align-items: flex-start; }
 .task input[type="checkbox"] { width: 1.3rem; min-height: 1.3rem; margin-top: 0.15rem; accent-color: var(--success); }
 .task small { display: block; margin-top: 0.25rem; color: var(--muted); }
-.task-runtime { margin: 0.5rem 0 0 2.1rem; color: var(--accent-strong); font-weight: 700; }
+.task-runtime, .task-expiration { margin: 0.5rem 0 0 2.1rem; color: var(--accent-strong); font-weight: 700; }
+.task-expiration { color: var(--muted); }
 .warning-copy { margin: 0.5rem 0 0 2.1rem; color: var(--warning); font-weight: 700; }
 .task-actions { display: flex; gap: 0.45rem; flex-wrap: wrap; }
 .task-actions button { min-height: 36px; padding: 0.45rem 0.75rem; }

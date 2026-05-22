@@ -1,5 +1,6 @@
 const PRIORITY_WEIGHT = { urgent: 0, normal: 1, low: 2 };
 const TAG_WEIGHT = { 'set-and-forget': 0, 'time-sensitive': 1, 'needs-daylight': 2, anytime: 3 };
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 export function parseCleaningYaml(source) {
   const lines = source.split(/\r?\n/);
@@ -91,7 +92,7 @@ export function getAllTasks(plan) {
 export function getRecommendedTasks(plan, state = {}, sun = {}, now = new Date()) {
   const completed = state.completed || {};
   const skipped = state.skipped || {};
-  const tasks = getAllTasks(plan).filter((task) => !completed[task.uid] && !skipped[task.uid]);
+  const tasks = getAllTasks(plan).filter((task) => !isTaskDone(task, completed[task.uid], now) && !skipped[task.uid]);
   const daylightUrgency = minutesUntil(sun.sunset, now) <= 120;
   const lunchWindow = now.getHours() >= 11 && now.getHours() <= 14;
 
@@ -107,20 +108,37 @@ export function getRecommendedTasks(plan, state = {}, sun = {}, now = new Date()
   });
 }
 
-export function summarizeProgress(plan, state = {}) {
+export function summarizeProgress(plan, state = {}, now = new Date()) {
   const completed = state.completed || {};
   const skipped = state.skipped || {};
   const rooms = plan.rooms.map((room) => {
     const actionable = room.tasks.filter((task) => !skipped[task.uid]);
-    const done = actionable.filter((task) => completed[task.uid]).length;
+    const done = actionable.filter((task) => isTaskDone(task, completed[task.uid], now)).length;
     const total = actionable.length;
     return { id: room.id, name: room.name, done, total, percent: total ? Math.round((done / total) * 100) : 100 };
   });
   const totals = rooms.reduce((sum, room) => ({ done: sum.done + room.done, total: sum.total + room.total }), { done: 0, total: 0 });
   const remainingMinutes = getAllTasks(plan)
-    .filter((task) => !completed[task.uid] && !skipped[task.uid])
+    .filter((task) => !isTaskDone(task, completed[task.uid], now) && !skipped[task.uid])
     .reduce((sum, task) => sum + Number(task.estimateMinutes || 0), 0);
   return { rooms, done: totals.done, total: totals.total, percent: totals.total ? Math.round((totals.done / totals.total) * 100) : 100, remainingMinutes };
+}
+
+function isTaskDone(task, completion, now) {
+  return Boolean(completion) && !isTaskCompletionExpired(task, completion, now);
+}
+
+export function isTaskCompletionExpired(task, completion, now = new Date()) {
+  const expiresAt = taskCompletionExpiresAt(task, completion);
+  return Boolean(expiresAt) && expiresAt <= now;
+}
+
+export function taskCompletionExpiresAt(task, completion) {
+  const repeatDays = Number(task.repeatDays || 0);
+  if (!repeatDays || !completion?.completedAt) return null;
+  const completedAt = new Date(completion.completedAt);
+  if (Number.isNaN(completedAt.getTime())) return null;
+  return new Date(completedAt.getTime() + repeatDays * DAY_MS);
 }
 
 export function isSunsetWithin(sunset, hours, now = new Date()) {

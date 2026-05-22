@@ -9,10 +9,12 @@ test('app shell links runtime data and PWA metadata', async () => {
 
   assert.match(html, /manifest\.webmanifest/);
   assert.match(html, /id="notify-enabled"/);
+  assert.match(html, /list="goal-options"/);
   assert.match(html, /id="build-ref"/);
   assert.match(app, /data\/cleaning-plan\.yml/);
   assert.match(app, /api\.sunrise-sunset\.org/);
   assert.match(app, /data-done=/);
+  assert.match(app, /task-expiration/);
   assert.match(app, /CACHE_VERSION = '([^']+)'/);
   assert.match(sw, /cleaning-plan\.yml/);
   assert.match(sw, /CACHE_VERSION/);

@@ -1,4 +1,4 @@
-import { getRecommendedTasks, isSunsetWithin, makeCustomTask, normalizePlan, parseCleaningYaml, summarizeProgress } from './planner.js';
+import { getRecommendedTasks, isTaskCompletionExpired, isSunsetWithin, makeCustomTask, normalizePlan, parseCleaningYaml, summarizeProgress, taskCompletionExpiresAt } from './planner.js';
 
 const STORAGE_KEY = 'cleaning-coach-state-v1';
 const messages = [
@@ -156,6 +156,7 @@ function getPosition() {
 
 function render() {
   if (!plan) return;
+  resetExpiredCompletions();
   $('#goal').value = state.goal || '';
   $('#goal-display').hidden = !state.goal;
   $('#goal-display').textContent = state.goal ? `Reward waiting: ${state.goal}` : '';
@@ -244,12 +245,14 @@ function renderTask(task) {
   item.dataset.roomId = task.roomId;
   const actual = done?.actualMinutes ? ` · actual ${formatDuration(done.actualMinutes)}` : '';
   const lastDone = done?.completedAt ? ` · done ${new Date(done.completedAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}` : '';
+  const expiration = formatTaskExpiration(task, done);
   item.innerHTML = `
     <div class="task-main">
       <label>
         <input type="checkbox" ${done ? 'checked' : ''} data-complete="${task.uid}" />
         <span><strong>${task.emoji || emojiForTask(task)} ${task.name}</strong><small>${task.priority} · ${task.tag} · ${task.estimateMinutes} min${actual}${lastDone}</small></span>
       </label>
+      ${expiration ? `<p class="task-expiration">${expiration}</p>` : ''}
       ${started && !done ? `<p class="task-runtime">⏱ ${formatDuration(elapsedMinutes)} elapsed</p>` : ''}
       ${daylightWarning ? '<p class="warning-copy">Sunset is close — do this while light is available.</p>' : ''}
     </div>
@@ -261,6 +264,18 @@ function renderTask(task) {
     </div>
   `;
   return item;
+}
+
+function resetExpiredCompletions(now = new Date()) {
+  let changed = false;
+  for (const task of plan.rooms.flatMap((room) => room.tasks)) {
+    if (isTaskCompletionExpired(task, state.completed[task.uid], now)) {
+      delete state.completed[task.uid];
+      delete state.starts[task.uid];
+      changed = true;
+    }
+  }
+  if (changed) saveState();
 }
 
 function bindRoomEvents(container) {
@@ -380,6 +395,21 @@ function formatDuration(minutes) {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
   return hours ? `${hours}h ${mins}m` : `${mins}m`;
+}
+
+function formatTaskExpiration(task, completion) {
+  const expiresAt = taskCompletionExpiresAt(task, completion);
+  if (!expiresAt) return task.repeatDays ? `Repeats ${formatDays(task.repeatDays)} after completion` : '';
+  const now = new Date();
+  const minutes = Math.max(0, Math.round((expiresAt.getTime() - now.getTime()) / 60000));
+  const days = Math.floor(minutes / 1440);
+  const hours = Math.floor((minutes % 1440) / 60);
+  const label = days ? `${days}d ${hours}h` : formatDuration(minutes);
+  return `Resets in ${label} · ${expiresAt.toLocaleDateString([], { dateStyle: 'medium' })}`;
+}
+
+function formatDays(days) {
+  return `${days} day${Number(days) === 1 ? '' : 's'}`;
 }
 
 function emojiForTask(task) {

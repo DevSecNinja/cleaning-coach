@@ -29,6 +29,13 @@ rooms:
         priority: normal
         tag: time-sensitive
         estimateMinutes: 30
+        repeatDays: 14
+      - id: oven
+        name: Oven
+        priority: normal
+        tag: set-and-forget
+        estimateMinutes: 30
+        repeatDays: 30
       - id: drawers
         name: Drawers
         priority: low
@@ -153,12 +160,20 @@ rooms:
     name: General/Floors
     tasks:
       - id: corner-dusting
-        name: Corner dusting
+        name: Dusting (stof verwijderen)
         priority: normal
         tag: needs-daylight
         estimateMinutes: 20
+        repeatDays: 7
+      - id: vacuuming
+        name: Vacuuming
+        priority: normal
+        tag: anytime
+        estimateMinutes: 25
+        repeatDays: 7
       - id: wet-mop-all-hard-floors
-        name: Wet mop all hard floors
+        name: Mopping
         priority: urgent
         tag: time-sensitive
         estimateMinutes: 35
+        repeatDays: 14
