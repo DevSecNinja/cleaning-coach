@@ -39,7 +39,7 @@ jobs:
           mkdir dist
           cp -R assets data docs src index.html manifest.webmanifest README.md styles.css sw.js dist/
           sed -i "s/__BUILD_VERSION__/${GITHUB_SHA}/g" dist/sw.js
-      - uses: actions/configure-pages@v6
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
