@@ -1,6 +1,6 @@
 {
   "name": "cleaning-coach",
-  "image": "ghcr.io/devsecninja/dotfiles-devcontainer:latest@sha256:8ffabde8687b710cad726424dcdc2b31264fd9409d08caba0fbbdd162812f3a3",
+  "image": "ghcr.io/devsecninja/dotfiles-devcontainer:latest@sha256:b6b457dd71adecf291fed703bc0335d04e80664d16527e787e603d24a156d97b",
   "features": {},
   "postCreateCommand": "",
   "customizations": {}
