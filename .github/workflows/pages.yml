@@ -26,7 +26,7 @@ jobs:
       - run: npm test -- --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=test-results.xml
       - name: Publish test results
         if: always()
-        uses: DevSecNinja/.github/actions/test-report@5452dbd33d61b4fc58b1780f57e0b60ff131be75 # v4.10.0
+        uses: DevSecNinja/.github/actions/test-report@83767fc52e76cff7dd185a15d1343b68a03cb483 # v4.10.1
         with:
           paths: test-results.xml
           title: node --test
