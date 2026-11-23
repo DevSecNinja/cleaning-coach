@@ -23,7 +23,13 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
           node-version: 24
-      - run: npm test
+      - run: npm test -- --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=test-results.xml
+      - name: Publish test results
+        if: always()
+        uses: DevSecNinja/.github/actions/test-report@83767fc52e76cff7dd185a15d1343b68a03cb483 # v4.10.1
+        with:
+          paths: test-results.xml
+          title: node --test
 
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
